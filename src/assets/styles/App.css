@@ -1,0 +1,36 @@
+@font-face {
+  font-family: "Avenir-Black";
+  src: local("Avenir-Black"), url(../fonts/Avenir-Black.otf) format("truetype");
+}
+@font-face {
+  font-family: "Avenir-Book";
+  src: local("Avenir-Book"), url(../fonts/Avenir-Book.otf) format("truetype");
+}
+@font-face {
+  font-family: "Avenir-Roman";
+  src: local("Avenir-Roman"), url(../fonts/Avenir-Roman.otf) format("truetype");
+}
+@font-face {
+  font-family: "Product-Sans-Regular";
+  src: local("Product-Sans-Regular"),
+    url(../fonts/Product-Sans-Regular.ttf) format("truetype");
+}
+@font-face {
+  font-family: "Product-Sans-Italic";
+  src: local("Product-Sans-Italic"),
+    url(../fonts/Product-Sans-Italic.ttf) format("truetype");
+}
+@font-face {
+  font-family: "Product-Sans-Bold";
+  src: local("Product-Sans-Bold"),
+    url(../fonts/Product-Sans-Bold.ttf) format("truetype");
+}
+@font-face {
+  font-family: "Product-Sans-Bold-Italic";
+  src: local("Product-Sans-Bold-Italic"),
+    url(../fonts/Product-Sans-Bold-Italic.ttf) format("truetype");
+}
+
+body {
+  background-color: #e5e5e5;
+}
