@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowCircleLeftIcon } from "@heroicons/react/solid";
+import DOMPurify from "dompurify";
 import dateFormat from "dateformat";
 import { API } from "../config/api";
+
 import { globalTitle } from "../App";
 
 export default function JourneyDetails() {
@@ -12,13 +14,14 @@ export default function JourneyDetails() {
   const [journey, setJourney] = useState({});
   const [loading, setLoading] = useState(true);
 
+  let clean = DOMPurify.sanitize(journey.body);
+
   const getJourney = async () => {
     try {
       await API.get(`/post/detail/${id}`)
         .then((res) => {
           setJourney(res.data.post);
           setLoading(false);
-          console.log(res.data.post);
         })
         .catch((e) => console.log(e));
     } catch (error) {
@@ -66,7 +69,10 @@ export default function JourneyDetails() {
             </figure>
 
             <div className="w-7/12">
-              <p className="indent-10 text-brand-darkGray">{journey.body}</p>
+              <p
+                dangerouslySetInnerHTML={{ __html: clean }}
+                className="indent-10 text-brand-darkGray"
+              ></p>
             </div>
           </section>
         </main>

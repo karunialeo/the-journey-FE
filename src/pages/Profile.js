@@ -3,13 +3,17 @@ import { API } from "../config/api";
 import { globalTitle } from "../App";
 
 import { UserContext } from "../contexts/UserContext";
+import { LoginContext } from "../contexts/AuthContext";
+import { ModalContext } from "../contexts/ModalContext";
 
 import { JourneyCard } from "../exports";
 import { BookmarkCircle, UserLeo } from "../exports/expImages";
-import { user } from "../exports/expTempDB";
 
 export default function Profile() {
+  const [isLogin, setIsLogin] = useContext(LoginContext);
+  const [open, setOpen] = useContext(ModalContext);
   const [state, dispatch] = useContext(UserContext);
+  
   const [journeys, setJourneys] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -19,6 +23,28 @@ export default function Profile() {
       // Store product data to useState variabel
       setJourneys(response.data.data);
       console.log(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const toggleAddBookmark = async (idPost) => {
+    try {
+      if (isLogin) {
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+          },
+        };
+
+        const body = JSON.stringify({ idPost });
+
+        const response = await API.post("/bookmark/toggle", body, config);
+        setOpen(true);
+        console.log(response);
+      } else {
+        setOpen(true);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -50,6 +76,7 @@ export default function Profile() {
       <section className="flex flex-wrap justify-center md:justify-start">
         {journeys.map((journey) => (
           <JourneyCard
+            toggleAddBookmark={() => toggleAddBookmark(journey.id)}
             key={journey.id}
             id={journey.id}
             image={journey.image}

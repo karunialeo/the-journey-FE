@@ -80,19 +80,18 @@ function App() {
       <ModalProvider>
         <RegisteredProvider>
           <Navbar />
-          <Modal />
         </RegisteredProvider>
+        <Routes>
+          <Route exact path="/" element={<Home />} />
+          <Route path="/journey/:id" element={<JourneyDetails />} />
+          <Route exact path="/" element={<UserRoute />}>
+            <Route path="/bookmarks" element={<Bookmarks />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/journey/add" element={<AddJourney />} />
+          </Route>
+        </Routes>
+        <Footer />
       </ModalProvider>
-      <Routes>
-        <Route exact path="/" element={<Home />} />
-        <Route path="/journey/:id" element={<JourneyDetails />} />
-        <Route exact path="/" element={<UserRoute />}>
-          <Route path="/bookmarks" element={<Bookmarks />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/journey/add" element={<AddJourney />} />
-        </Route>
-      </Routes>
-      <Footer />
     </>
   );
 }

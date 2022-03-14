@@ -1,11 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { API } from "../config/api";
-import { JourneyCard } from "../exports";
+import { JourneyCard, Modal } from "../exports";
 import dateFormat from "dateformat";
-import { BookmarkCircle, PictureIcon } from "../exports/expImages";
 import { globalTitle } from "../App";
 
+import { BookmarkCircle, BookmarkFill } from "../exports/expImages";
+
+import { LoginContext } from "../contexts/AuthContext";
+import { ModalContext } from "../contexts/ModalContext";
+
 export default function Home() {
+  const [isLogin, setIsLogin] = useContext(LoginContext);
+  const [open, setOpen] = useContext(ModalContext);
+
+  const [isBookmarked, setIsBookmarked] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [journeys, setJourneys] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,10 +28,35 @@ export default function Home() {
     }
   };
 
+  const toggleAddBookmark = async (idPost) => {
+    try {
+      if (isLogin) {
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+          },
+        };
+
+        const body = JSON.stringify({ idPost });
+
+        const response = await API.post("/bookmark/toggle", body, config);
+        setOpen(true);
+        console.log(response);
+      } else {
+        setOpen(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    getJourneys();
     setLoading(false);
     document.title = globalTitle + "| Home";
+    getJourneys();
+    return () => {
+      setJourneys([]);
+    };
   }, []);
 
   const handleChange = (event) => {
@@ -71,10 +104,10 @@ export default function Home() {
             })
             .map((journey) => (
               <JourneyCard
+                toggleAddBookmark={() => toggleAddBookmark(journey.id)}
                 key={journey.id}
                 id={journey.id}
                 image={journey.image}
-                bookmark={BookmarkCircle}
                 title={journey.title}
                 postAt={dateFormat(journey.createdAt, "mmmm dd, yyyy")}
                 user={journey.user.fullname}

@@ -1,14 +1,19 @@
-import React, { Component, useEffect, useState } from "react";
-import { Editor } from "react-draft-wysiwyg";
-import { EditorState, convertToRaw } from "draft-js";
-import draftToHtml from "draftjs-to-html";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import React, { useEffect, useState } from "react";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { API } from "../config/api";
+
+// import { Editor } from "react-draft-wysiwyg";
+// import { EditorState, convertToRaw } from "draft-js";
+// import draftToHtml from "draftjs-to-html";
+// import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+
 import { PictureIcon } from "../exports/expImages";
 import { globalTitle } from "../App";
 
 export default function AddJourney() {
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [preview, setPreview] = useState(null);
+  const [message, setMessage] = useState(null);
   const [form, setForm] = useState({
     title: "",
     image: "",
@@ -17,8 +22,12 @@ export default function AddJourney() {
 
   const { title, image, body } = form;
 
-  const onEditorStateChange = (editorState) => {
-    setEditorState(editorState);
+  const handleEditorChange = (event, editor) => {
+    const data = editor.getData();
+    setForm({
+      ...form,
+      body: data,
+    });
   };
 
   const handleChange = (e) => {
@@ -35,11 +44,46 @@ export default function AddJourney() {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
 
-    // alert(draftToHtml(convertToRaw(editorState.getCurrentContent())));
-    console.log(form);
+      // Configuration
+      const config = {
+        headers: {
+          "Content-type": "multipart/form-data",
+        },
+      };
+
+      // Store data with FormData as object
+      const formData = new FormData();
+      formData.set("title", form.title);
+      formData.set("body", form.body);
+      formData.set("image", form.image[0], form.image[0].name);
+
+      // Insert product data
+      const response = await API.post("/post/add", formData, config);
+
+      if (response.data.status === "Success") {
+        console.log(response);
+        setMessage("Journey Posted.");
+        // setTimeout(() => {
+        //   setMessage(null);
+        // }, 4000);
+        setForm({
+          title: "",
+          price: "",
+          image: "",
+        });
+      } else {
+        const alert = "Failed To Post Journey";
+        setMessage(alert);
+        console.log(response);
+      }
+    } catch (error) {
+      console.log(error);
+      setMessage("Server Error");
+    }
   };
 
   useEffect(() => {
@@ -67,13 +111,15 @@ export default function AddJourney() {
             className="px-4 py-3 outline-none rounded-sm"
           />
         </div>
-        <Editor
-          editorState={editorState}
-          wrapperClassName="w-full h-48"
-          toolbarClassName="rounded-sm outline-none border-0"
-          editorClassName="bg-white px-5 py-1 rounded-sm"
-          onEditorStateChange={onEditorStateChange}
-          placeholder="Type something..."
+        <CKEditor
+          editor={ClassicEditor}
+          onChange={handleEditorChange}
+          // onBlur={(event, editor) => {
+          //   console.log("Blur.", editor);
+          // }}
+          // onFocus={(event, editor) => {
+          //   console.log("Focus.", editor);
+          // }}
         />
         <div className="">
           <label htmlFor="body" className="sr-only">
@@ -84,7 +130,6 @@ export default function AddJourney() {
             disabled
             name="body"
             id="body"
-            value={draftToHtml(convertToRaw(editorState.getCurrentContent()))}
             cols="100"
             rows="5"
           ></textarea>
@@ -110,9 +155,14 @@ export default function AddJourney() {
               className="sr-only"
             />
           </label>
-          <button className="text-center text-white px-10 py-2 bg-brand-blue rounded-md">
-            Post
-          </button>
+          <div className="text-right space-y-3">
+            <button className="text-center text-white px-10 py-2 bg-brand-blue rounded-md">
+              Post
+            </button>
+            <div className="text-brand-darkGray text-xl">
+              {message && message}
+            </div>
+          </div>
         </div>
       </form>
     </main>

@@ -8,16 +8,16 @@ import RegisterModal from "./RegisterModal";
 
 export default function Modal(props) {
   const [registered, setRegistered] = useContext(RegisteredContext);
-  const [open, setOpen] = useContext(ModalContext);
+  // const [open, setOpen] = useContext(ModalContext);
   const cancelButtonRef = useRef(null);
 
   return (
-    <Transition.Root show={open} as={Fragment}>
+    <Transition.Root show={props.open} as={Fragment}>
       <Dialog
         as="div"
         className="fixed z-10 inset-0 overflow-y-auto"
         initialFocus={cancelButtonRef}
-        onClose={() => setOpen(!open)}
+        onClose={props.onClose}
       >
         <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
           <Transition.Child
@@ -48,7 +48,7 @@ export default function Modal(props) {
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle w-80">
-              {registered ? <LoginModal /> : <RegisterModal />}
+              {props.children}
             </div>
           </Transition.Child>
         </div>

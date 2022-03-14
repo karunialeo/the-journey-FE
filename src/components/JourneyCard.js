@@ -1,8 +1,42 @@
+import React, { useContext, useEffect, useState } from "react";
 import dateFormat from "dateformat";
-import React, { Component } from "react";
+import DOMPurify from "dompurify";
 import { Link } from "react-router-dom";
+import { API } from "../config/api";
+
+import { BookmarkCircle, BookmarkFill } from "../exports/expImages";
+
+import { UserContext } from "../contexts/UserContext";
 
 export default function JourneyCard(props) {
+  let clean = DOMPurify.sanitize(props.body);
+
+  const [state, dispatch] = useContext(UserContext);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
+  const checkBookmark = async () => {
+    try {
+      const response = await API.get(
+        `/bookmark/check/${state.user.id}/${props.id}`
+      );
+      if (response.data.status === "Bookmarked") {
+        setIsBookmarked(true);
+      } else if (response.data.status === "Unbookmarked") {
+        setIsBookmarked(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleClick = () => {
+    setIsBookmarked(!isBookmarked);
+  };
+
+  useEffect(() => {
+    checkBookmark();
+  }, []);
+
   return (
     <Link
       to={`/journey/${props.id}`}
@@ -19,10 +53,16 @@ export default function JourneyCard(props) {
         type="button"
         onClick={(e) => {
           e.preventDefault();
+          handleClick();
+          props.toggleAddBookmark();
         }}
         className="absolute top-3 right-3 cursor-default rounded-full hover:shadow-lg"
       >
-        <img src={props.bookmark} alt="bookmark" className="rounded-full" />
+        <img
+          src={isBookmarked ? BookmarkFill : BookmarkCircle}
+          alt="bookmark"
+          className="rounded-full"
+        />
       </button>
 
       <div className="p-3">
@@ -30,9 +70,10 @@ export default function JourneyCard(props) {
         <div className="text-sm text-brand-gray mb-5 truncate">
           {dateFormat(props.postAt, "mmmm dd, yyyy")}, {props.user}
         </div>
-        <div className="text-sm font-['Product-Sans-Regular'] line-clamp-5">
-          {props.body}
-        </div>
+        <div
+          dangerouslySetInnerHTML={{ __html: clean }}
+          className="text-sm font-['Product-Sans-Regular'] line-clamp-5"
+        ></div>
       </div>
     </Link>
   );
