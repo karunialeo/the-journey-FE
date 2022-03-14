@@ -1,19 +1,28 @@
-import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../config/Firebase";
 
-import { Jumbotron, Avatar } from "../exports";
-import { user } from "../exports/expTempDB";
-import { LogoBlack } from "../exports/expImages";
+import { UserContext } from "../contexts/UserContext";
 import { LoginContext } from "../contexts/AuthContext";
 
+import { Jumbotron, Avatar } from "../exports";
+import { LogoBlack } from "../exports/expImages";
+
 export default function Navbar() {
+  const [state, dispatch] = useContext(UserContext);
   const [isLogin, setIsLogin] = useContext(LoginContext);
+
+  let navigate = useNavigate();
+
   const signGoogleOut = () => {
     signOut(auth)
       .then(() => {
         setIsLogin(false);
+        dispatch({
+          type: "LOGOUT",
+        });
+        navigate("/");
       })
       .catch((error) => {
         console.log(error);
@@ -29,8 +38,8 @@ export default function Navbar() {
               <img src={LogoBlack} alt="" />
             </Link>
             <div className="flex items-center space-x-3">
-              <span>Welcome Back, {user.fullname}!</span>
-              <Avatar logout={signGoogleOut} />
+              <span>Welcome Back, {state.user.fullname}!</span>
+              <Avatar logout={signGoogleOut} image={state.user.image} />
             </div>
           </nav>
           <div className="h-20"></div>

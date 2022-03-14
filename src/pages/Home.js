@@ -31,23 +31,19 @@ export default function Home() {
   };
 
   return (
-    <main id="journey" className="px-4 md:px-12 py-16">
-      <section>
+    <main id="journey" className="px-4 md:px-12 pt-16">
+      <section className="md:flex md:justify-between">
         <h3 className="text-2xl md:text-4xl font-bold pb-10">Journey</h3>
 
-        <form className="w-full flex justify-center pb-10">
+        <form className="md:w-1/2 flex justify-end pb-10 ,d:pr-8">
           <input
             type="text"
-            className="duration-150 w-3/4 md:w-10/12 p-3 rounded-l-md outline-none focus:outline-none shadow-md focus:shadow-xl"
-            placeholder="Find Journey"
+            id="searchTerm"
+            name="searchTerm"
+            className="w-full duration-150 p-3 rounded-md outline-none focus:outline-none shadow-md focus:shadow-xl"
+            placeholder={"Find Journey"}
             onChange={handleChange}
           />
-          <button
-            type="button"
-            className="w-1/4 md:w-1/12 bg-brand-blue py-3 rounded-r-md text-white shadow-md"
-          >
-            Search
-          </button>
         </form>
       </section>
 
@@ -62,16 +58,12 @@ export default function Home() {
               if (searchTerm === "") {
                 return journey;
               } else if (
-                journey.title.toLowerCase().includes(searchTerm.toLowerCase())
-              ) {
-                return journey;
-              } else if (
+                journey.title
+                  .toLowerCase()
+                  .includes(searchTerm.toLowerCase()) ||
                 journey.user.fullname
                   .toLowerCase()
-                  .includes(searchTerm.toLowerCase())
-              ) {
-                return journey;
-              } else if (
+                  .includes(searchTerm.toLowerCase()) ||
                 journey.body.toLowerCase().includes(searchTerm.toLowerCase())
               ) {
                 return journey;

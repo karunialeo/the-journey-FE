@@ -75,6 +75,20 @@ export default function AddJourney() {
           onEditorStateChange={onEditorStateChange}
           placeholder="Type something..."
         />
+        <div className="">
+          <label htmlFor="body" className="sr-only">
+            Body
+          </label>
+          <textarea
+            className="absolute top-28 right-20"
+            disabled
+            name="body"
+            id="body"
+            value={draftToHtml(convertToRaw(editorState.getCurrentContent()))}
+            cols="100"
+            rows="5"
+          ></textarea>
+        </div>
         <div className="md:flex md:justify-between items-start mt-20">
           <label
             htmlFor="image"
@@ -92,7 +106,6 @@ export default function AddJourney() {
               type="file"
               id="image"
               name="image"
-              value={image}
               onChange={handleChange}
               className="sr-only"
             />

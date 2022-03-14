@@ -45,7 +45,7 @@ export default function JourneyDetails() {
                 <Link to={-1} className="z-0">
                   <ArrowCircleLeftIcon className="h-9 w-9 rounded-full border-2 border-brand-blue text-brand-blue shadow-md hover:shadow-xl animate-bounce" />
                 </Link>
-                <h2 className="text-5xl font-bold">{journey.title}</h2>
+                <h2 className="text-4xl font-bold">{journey.title}</h2>
               </div>
               <p className="text-brand-blue">
                 {dateFormat(journey.createdAt, "dddd, mmmm dd, yyyy")}
@@ -56,16 +56,18 @@ export default function JourneyDetails() {
             </div>
           </section>
 
-          <figure className="w-full">
-            <img
-              src={journey.image}
-              alt={journey.image}
-              className="w-full rounded-md"
-            />
-          </figure>
+          <section className="flex space-x-5">
+            <figure className="w-5/12">
+              <img
+                src={journey.image}
+                alt={journey.image}
+                className="w-full rounded-md"
+              />
+            </figure>
 
-          <section>
-            <p className="indent-10 text-brand-darkGray">{journey.body}</p>
+            <div className="w-7/12">
+              <p className="indent-10 text-brand-darkGray">{journey.body}</p>
+            </div>
           </section>
         </main>
       )}

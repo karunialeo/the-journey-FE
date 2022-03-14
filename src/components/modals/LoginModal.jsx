@@ -22,6 +22,8 @@ export default function LoginModal() {
   const [registered, setRegistered] = useContext(RegisteredContext);
   const [open, setOpen] = useContext(ModalContext);
   const [state, dispatch] = useContext(UserContext);
+
+  const [message, setMessage] = useState(null);
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -36,14 +38,27 @@ export default function LoginModal() {
     });
   };
 
-  const signInWithGoogle = () => {
+  const signInWithGoogle = (e) => {
+    e.preventDefault();
+
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
-      .then((result) => {
-        console.log(result);
+      .then((res) => {
         onAuthStateChanged(auth, (user) => {
           if (user) {
+            const user = res.user;
             setIsLogin(true);
+            dispatch({
+              type: "LOGIN_SUCCESS",
+              payload: {
+                email: user.email,
+                fullname: user.displayName,
+                id: user.uid,
+                image: user.photoURL,
+                phone: user.phoneNumber,
+                token: user.accessToken,
+              },
+            });
           } else {
             setIsLogin(false);
           }
@@ -70,17 +85,21 @@ export default function LoginModal() {
       const body = JSON.stringify(form);
 
       // Insert data for login process
-      // const response = await API.post("/login", body, config);
+      const response = await API.post("/login", body, config);
+      console.log(response.data.data.user);
 
-      // if (response?.status === 200) {
-      //   // Send data to useContext
-      //   dispatch({
-      //     type: "LOGIN_SUCCESS",
-      //     payload: response.data.data.user,
-      //   });
-      //   console.log(response);
-      // }
+      if (response?.status === 200) {
+        //   // Send data to useContext
+        dispatch({
+          type: "LOGIN_SUCCESS",
+          payload: response.data.data.user,
+        });
+
+        setOpen(false);
+      }
     } catch (error) {
+      const alert = "Login Failed! Try Again.";
+      setMessage(alert);
       console.log(error);
     }
   };
@@ -89,10 +108,13 @@ export default function LoginModal() {
     <section className="px-8 py-10 font-['Product-Sans-Regular'] relative">
       <img src={LoginPinIcon} alt="pin" className="absolute top-0 left-0" />
       <img src={LoginLeafIcon} alt="pin" className="absolute top-0 right-0" />
-      <div>
+      <div className="relative">
         <h2 className="mt-4 text-center text-3xl font-bold text-brand-red">
           Sign In
         </h2>
+        <p className="absolute top-10 w-full text-center text-red-600">
+          {message && message}
+        </p>
       </div>
       <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
         <div className="space-y-4">
@@ -125,6 +147,9 @@ export default function LoginModal() {
         </div>
 
         <div className="text-center space-y-3">
+          <button className="w-full text-center py-2 px-4 font-bold rounded-md text-white bg-brand-blue">
+            Sign In
+          </button>
           <div>
             <p className="text-left font-bold">Or</p>
             <button
@@ -135,15 +160,6 @@ export default function LoginModal() {
               <p>Sign In With Google</p>
             </button>
           </div>
-          <button
-            onClick={() => {
-              setIsLogin(true);
-              setOpen(false);
-            }}
-            className="w-full text-center py-2 px-4 font-bold rounded-md text-white bg-brand-blue"
-          >
-            Sign In
-          </button>
           <p className="text-sm text-brand-darkGray">
             Don't have an account?{" "}
             <button

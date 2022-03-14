@@ -1,4 +1,5 @@
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import Jumbotron from "../components/Jumbotron";
 import JourneyCard from "../components/JourneyCard";
 import Avatar from "../components/Avatar";
@@ -15,6 +16,7 @@ import Profile from "../pages/Profile";
 
 export {
   Navbar,
+  Footer,
   Jumbotron,
   JourneyCard,
   Avatar,

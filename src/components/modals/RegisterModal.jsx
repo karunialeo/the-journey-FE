@@ -1,4 +1,5 @@
 import React, { Component, useContext, useState } from "react";
+import { API } from "../../config/api";
 import {
   signInWithPopup,
   GoogleAuthProvider,
@@ -21,6 +22,8 @@ export default function RegisterModal() {
   const [registered, setRegistered] = useContext(RegisteredContext);
   const [open, setOpen] = useContext(ModalContext);
   const [state, dispatch] = useContext(UserContext);
+
+  const [message, setMessage] = useState(null);
   const [form, setForm] = useState({
     fullname: "",
     email: "",
@@ -37,7 +40,9 @@ export default function RegisterModal() {
     });
   };
 
-  const signInWithGoogle = () => {
+  const signInWithGoogle = (e) => {
+    e.preventDefault();
+
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
       .then((result) => {
@@ -67,11 +72,43 @@ export default function RegisterModal() {
       };
 
       // Data body
-      const body = JSON.stringify(this.state.form);
+      const body = JSON.stringify(form);
 
-      console.log(body);
+      const response = await API.post("/register", body, config);
+      console.log(response);
+
+      if (response.data.status === "Success") {
+        const alert = (
+          <>
+            <div className="absolute top-10 w-full text-center text-green-600">
+              <p>Successfully Registered.</p>
+              <p>Please Login.</p>
+            </div>
+          </>
+        );
+        setMessage(alert);
+        setForm({
+          fullname: "",
+          email: "",
+          phone: "",
+          password: "",
+        });
+      } else if (response?.status === 400) {
+        const alert = (
+          <p className="absolute top-10 w-full text-center text-red-600">
+            Failed. Try Again.
+          </p>
+        );
+        setMessage(alert);
+      }
     } catch (error) {
       console.log(error);
+      const alert = (
+        <p className="absolute top-10 w-full text-center text-red-600">
+          Server Error. Try Again.
+        </p>
+      );
+      setMessage(alert);
     }
   };
 
@@ -79,10 +116,11 @@ export default function RegisterModal() {
     <section className="px-8 py-10 font-['Product-Sans-Regular'] relative">
       <img src={LoginPinIcon} alt="pin" className="absolute top-0 left-0" />
       <img src={LoginLeafIcon} alt="pin" className="absolute top-0 right-0" />
-      <div>
+      <div className="relative">
         <h2 className="mt-4 text-center text-3xl font-bold text-brand-red">
           Sign Up
         </h2>
+        {message && message}
       </div>
       <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
         <div className="space-y-4">
@@ -141,16 +179,19 @@ export default function RegisterModal() {
         </div>
 
         <div className="text-center space-y-3">
+          <button className="w-full text-center py-2 px-4 font-bold rounded-md text-white bg-brand-blue">
+            Sign Up
+          </button>
           <div>
             <p className="text-left font-bold">Or</p>
-            <button className="flex justify-center items-center space-x-2 w-full text-center py-2 px-4 font-bold rounded-md border border-gray-700 text-gray-700 bg-white">
+            <button
+              onClick={signInWithGoogle}
+              className="flex justify-center items-center space-x-2 w-full text-center py-2 px-4 font-bold rounded-md border border-gray-700 text-gray-700 bg-white"
+            >
               <img src={GoogleIcon} alt="google" className="h-6" />
               <p>Sign In With Google</p>
             </button>
           </div>
-          <button className="w-full text-center py-2 px-4 font-bold rounded-md text-white bg-brand-blue">
-            Sign Up
-          </button>
           <p className="text-sm text-brand-darkGray">
             Already have an account?{" "}
             <button

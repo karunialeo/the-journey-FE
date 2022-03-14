@@ -1,19 +1,21 @@
-import React, { Component, useEffect, useState } from "react";
+import React, { Component, useContext, useEffect, useState } from "react";
 import { globalTitle } from "../App";
 import { API } from "../config/api";
+
 import { JourneyCard } from "../exports";
+import { UserContext } from "../contexts/UserContext";
 
 import { BookmarkFill, BookmarkCircle } from "../exports/expImages";
 
-import { blogs } from "../exports/expTempDB";
-
 export default function Bookmarks() {
+  const [state, dispatch] = useContext(UserContext);
+  const id = state.user.id;
   const [journeys, setJourneys] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const getJourneys = async () => {
     try {
-      const response = await API.get("/posts");
+      const response = await API.get(`/bookmark/user/${id}`);
       // Store product data to useState variabel
       setJourneys(response.data.data);
     } catch (error) {
@@ -32,16 +34,16 @@ export default function Bookmarks() {
       <h3 className="text-2xl md:text-4xl font-bold pb-10">Your Bookmarks</h3>
 
       <section className="flex flex-wrap justify-center md:justify-start">
-        {journeys.map((journey, index) => (
+        {journeys.map((journey) => (
           <JourneyCard
-            key={index}
-            journeyID={journey.id}
-            image={journey.image}
+            key={journey.post.id}
+            id={journey.post.id}
+            image={"http://localhost:5000/uploads/" + journey.post.image}
             bookmark={BookmarkFill}
-            title={journey.title}
-            postAt={journey.createdAt}
-            user={journey.user.name}
-            body={journey.body}
+            title={journey.post.title}
+            postAt={journey.post.updatedAt}
+            user={journey.post.user.fullname}
+            body={journey.post.body}
           />
         ))}
       </section>

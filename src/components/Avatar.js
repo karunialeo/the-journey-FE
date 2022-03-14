@@ -17,7 +17,7 @@ export default function Avatar(props) {
         <Menu.Button>
           <span className="sr-only">Open user menu</span>
           <img
-            src={UserLeo}
+            src={props.image}
             alt="user"
             className="max-h-14 w-14 object-cover rounded-full border-2 border-brand-blue"
           />
