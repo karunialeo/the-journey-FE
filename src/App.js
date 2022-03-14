@@ -47,7 +47,6 @@ function App() {
   const checkUser = async () => {
     try {
       const response = await API.get("/check-auth");
-      console.log(response);
 
       // If the token incorrect
       if (response.status === 404) {

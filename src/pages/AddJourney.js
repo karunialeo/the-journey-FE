@@ -67,19 +67,20 @@ export default function AddJourney() {
       if (response.data.status === "Success") {
         console.log(response);
         setMessage("Journey Posted.");
-        // setTimeout(() => {
-        //   setMessage(null);
-        // }, 4000);
-        setForm({
-          title: "",
-          price: "",
-          image: "",
-        });
+        setTimeout(() => {
+          setMessage(null);
+        }, 4000);
       } else {
         const alert = "Failed To Post Journey";
         setMessage(alert);
         console.log(response);
       }
+
+      setForm({
+        title: "",
+        price: "",
+        image: "",
+      });
     } catch (error) {
       console.log(error);
       setMessage("Server Error");
@@ -98,7 +99,7 @@ export default function AddJourney() {
         className="justify-center px-12 md:justify-start"
         onSubmit={handleSubmit}
       >
-        <div className="flex flex-col mb-5 space-y-3 w-full">
+        <div className="flex flex-col mb-5 space-y-3">
           <label htmlFor="title" className="text-xl md:text-2xl font-bold">
             Title
           </label>
@@ -111,52 +112,66 @@ export default function AddJourney() {
             className="px-4 py-3 outline-none rounded-sm"
           />
         </div>
-        <CKEditor
-          editor={ClassicEditor}
-          onChange={handleEditorChange}
-          // onBlur={(event, editor) => {
-          //   console.log("Blur.", editor);
-          // }}
-          // onFocus={(event, editor) => {
-          //   console.log("Focus.", editor);
-          // }}
-        />
-        <div className="">
-          <label htmlFor="body" className="sr-only">
-            Body
-          </label>
-          <textarea
-            className="absolute top-28 right-20"
-            disabled
-            name="body"
-            id="body"
-            cols="100"
-            rows="5"
-          ></textarea>
+        <div className="flex justify-between">
+          <div className="w-3/4">
+            <CKEditor
+              editor={ClassicEditor}
+              onChange={handleEditorChange}
+              config={{
+                removePlugins: ["EasyImage", "ImageUpload", "MediaEmbed"],
+              }}
+              onReady={(editor) => {
+                // You can store the "editor" and use when it is needed.
+                // console.log("Editor is ready to use!", editor);
+                editor.editing.view.change((writer) => {
+                  writer.setStyle(
+                    "min-height",
+                    "200px",
+                    editor.editing.view.document.getRoot()
+                  );
+                });
+              }}
+            />
+            {/* <div className="">
+              <label htmlFor="body" className="sr-only">
+                Body
+              </label>
+              <textarea
+                className="absolute top-28 right-20"
+                disabled
+                name="body"
+                id="body"
+                cols="100"
+                rows="5"
+              ></textarea>
+            </div> */}
+          </div>
+          <div>
+            <label
+              htmlFor="image"
+              className="flex flex-col items-center justify-end w-56 h-56 p-4 space-y-4 bg-brand-white border border-brand-blue rounded-md cursor-pointer"
+            >
+              <img
+                src={preview ? preview : PictureIcon}
+                alt="preview"
+                className="max-h-28"
+              />
+              <p className="font-['Avenir-Black'] font-bold text-lg">
+                Insert Image Here
+              </p>
+              <input
+                type="file"
+                id="image"
+                name="image"
+                onChange={handleChange}
+                className="sr-only"
+              />
+            </label>
+          </div>
         </div>
-        <div className="md:flex md:justify-between items-start mt-20">
-          <label
-            htmlFor="image"
-            className="flex flex-col items-center justify-end w-48 h-48 p-4 space-y-4 bg-brand-white border border-brand-blue rounded-md cursor-pointer"
-          >
-            <img
-              src={preview ? preview : PictureIcon}
-              alt="preview"
-              className="max-h-28"
-            />
-            <p className="font-['Avenir-Black'] font-bold text-lg">
-              Insert Image Here
-            </p>
-            <input
-              type="file"
-              id="image"
-              name="image"
-              onChange={handleChange}
-              className="sr-only"
-            />
-          </label>
-          <div className="text-right space-y-3">
-            <button className="text-center text-white px-10 py-2 bg-brand-blue rounded-md">
+        <div className="md:flex md:justify-center mt-8">
+          <div className="text-center space-y-3">
+            <button className="text-white px-20 py-2 bg-green-600 rounded-md">
               Post
             </button>
             <div className="text-brand-darkGray text-xl">

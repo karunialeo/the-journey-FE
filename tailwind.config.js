@@ -12,6 +12,16 @@ module.exports = {
       backgroundImage: {
         jumbotron: "url('/src/assets/img/jumbotron.png')",
       },
+      spacing: {
+        '80vh': '80vh',
+      },
+      minHeight: {
+        '60vh': '60vh',
+        '65vh': '65vh',
+        '70vh': '70vh',
+        '75vh': '75vh',
+        '80vh': '80vh',
+      }
     },
   },
   plugins: [require("@tailwindcss/line-clamp")],

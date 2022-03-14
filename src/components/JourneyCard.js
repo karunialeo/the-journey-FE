@@ -12,7 +12,9 @@ export default function JourneyCard(props) {
   let clean = DOMPurify.sanitize(props.body);
 
   const [state, dispatch] = useContext(UserContext);
+
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [bookmarkCount, setBookmarkCount] = useState(0);
 
   const checkBookmark = async () => {
     try {
@@ -29,11 +31,28 @@ export default function JourneyCard(props) {
     }
   };
 
+  const getBookmarkCount = async () => {
+    try {
+      const response = await API.get(`/bookmark/post/${props.id}`);
+      setBookmarkCount(response.data.data.length);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleClick = () => {
-    setIsBookmarked(!isBookmarked);
+    if (state.isLogin) {
+      setIsBookmarked(!isBookmarked);
+      if (isBookmarked) {
+        setBookmarkCount(bookmarkCount - 1);
+      } else {
+        setBookmarkCount(bookmarkCount + 1);
+      }
+    }
   };
 
   useEffect(() => {
+    getBookmarkCount();
     checkBookmark();
   }, []);
 
@@ -49,21 +68,26 @@ export default function JourneyCard(props) {
           className="h-48 object-cover self-center w-full"
         />
       </div>
-      <button
-        type="button"
-        onClick={(e) => {
-          e.preventDefault();
-          handleClick();
-          props.toggleAddBookmark();
-        }}
-        className="absolute top-3 right-3 cursor-default rounded-full hover:shadow-lg"
-      >
-        <img
-          src={isBookmarked ? BookmarkFill : BookmarkCircle}
-          alt="bookmark"
-          className="rounded-full"
-        />
-      </button>
+
+      <div className="absolute top-0 h-14 px-4 w-full bg-gradient-to-b from-black bg-opacity-40 flex flex-row-reverse items-center">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            handleClick();
+            props.toggleAddBookmark();
+          }}
+          className="cursor-default rounded-full hover:shadow-lg"
+        >
+          <img
+            src={isBookmarked ? BookmarkFill : BookmarkCircle}
+            alt="bookmark"
+            className="rounded-full"
+          />
+        </button>
+
+        <div className="text-2xl text-brand-white pr-2">{bookmarkCount}</div>
+      </div>
 
       <div className="p-3">
         <div className="text-lg font-bold truncate">{props.title}</div>

@@ -10,10 +10,6 @@ export default function Jumbotron() {
   const [open, setOpen] = useContext(ModalContext);
   const [registered, setRegistered] = useContext(RegisteredContext);
 
-  useEffect(() => {
-    document.title = globalTitle + "| Login";
-  }, []);
-
   return (
     <>
       <header className="relative">

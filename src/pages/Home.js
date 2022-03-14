@@ -1,10 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { API } from "../config/api";
-import { JourneyCard, Modal } from "../exports";
+import { JourneyCard } from "../exports";
 import dateFormat from "dateformat";
 import { globalTitle } from "../App";
-
-import { BookmarkCircle, BookmarkFill } from "../exports/expImages";
 
 import { LoginContext } from "../contexts/AuthContext";
 import { ModalContext } from "../contexts/ModalContext";
@@ -13,7 +11,6 @@ export default function Home() {
   const [isLogin, setIsLogin] = useContext(LoginContext);
   const [open, setOpen] = useContext(ModalContext);
 
-  const [isBookmarked, setIsBookmarked] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [journeys, setJourneys] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -68,7 +65,7 @@ export default function Home() {
       <section className="md:flex md:justify-between">
         <h3 className="text-2xl md:text-4xl font-bold pb-10">Journey</h3>
 
-        <form className="md:w-1/2 flex justify-end pb-10 ,d:pr-8">
+        <form className="md:w-1/2 flex justify-end pb-10 md:pr-8">
           <input
             type="text"
             id="searchTerm"
@@ -106,6 +103,7 @@ export default function Home() {
               <JourneyCard
                 toggleAddBookmark={() => toggleAddBookmark(journey.id)}
                 key={journey.id}
+                bookmarkCount={4}
                 id={journey.id}
                 image={journey.image}
                 title={journey.title}

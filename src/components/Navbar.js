@@ -33,7 +33,7 @@ export default function Navbar() {
     <>
       {isLogin ? (
         <>
-          <nav className="z-10 px-20 py-4 w-full fixed flex bg-gradient-to-b from-brand-white justify-between items-center shadow-xl">
+          <nav className="z-10 px-20 py-4 w-full fixed flex bg-brand-white bg-opacity-80 justify-between items-center shadow-xl">
             <Link to="/">
               <img src={LogoBlack} alt="" />
             </Link>

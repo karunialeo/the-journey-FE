@@ -45,8 +45,18 @@ export default function RegisterModal() {
 
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
-      .then((result) => {
-        console.log(result);
+      .then((res) => {
+        console.log(res);
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+          },
+        };
+        const form = {
+          email: res.email,
+        };
+        const response = API.post("/user", form, config);
+        console.log(response);
         onAuthStateChanged(auth, (user) => {
           if (user) {
             setIsLogin(true);
@@ -182,16 +192,16 @@ export default function RegisterModal() {
           <button className="w-full text-center py-2 px-4 font-bold rounded-md text-white bg-brand-blue">
             Sign Up
           </button>
-          <div>
+          {/* <div>
             <p className="text-left font-bold">Or</p>
             <button
               onClick={signInWithGoogle}
               className="flex justify-center items-center space-x-2 w-full text-center py-2 px-4 font-bold rounded-md border border-gray-700 text-gray-700 bg-white"
             >
               <img src={GoogleIcon} alt="google" className="h-6" />
-              <p>Sign In With Google</p>
+              <p>Continue With Google</p>
             </button>
-          </div>
+          </div> */}
           <p className="text-sm text-brand-darkGray">
             Already have an account?{" "}
             <button
