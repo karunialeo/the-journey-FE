@@ -1,6 +1,4 @@
 import axios from "axios";
-import { useContext } from "react";
-import { UserContext } from "../contexts/UserContext";
 
 export const API = axios.create({
   baseURL: "http://localhost:5000/api/v1/",
