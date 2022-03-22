@@ -1,5 +1,5 @@
 import React, { Component, useContext, useState } from "react";
-import { API } from "../../config/api";
+import { API, checkUser } from "../../config/api";
 import {
   signInWithPopup,
   GoogleAuthProvider,
@@ -46,27 +46,43 @@ export default function RegisterModal() {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
       .then((res) => {
-        console.log(res);
-        const config = {
-          headers: {
-            "Content-type": "application/json",
-          },
-        };
-        const form = {
-          email: res.email,
-        };
-        const response = API.post("/user", form, config);
-        console.log(response);
-        onAuthStateChanged(auth, (user) => {
-          if (user) {
+        return checkUser(res.user.email);
+      })
+      .then((res) => {
+        onAuthStateChanged(auth, async (user) => {
+          const config = {
+            headers: {
+              "Content-type": "application/json",
+            },
+          };
+
+          let body = {
+            email: user.email,
+          };
+
+          body = JSON.stringify(body);
+
+          if (res.data.status === "Success") {
+            const response = await API.post("/google-login", body, config);
+            console.log(response);
+            if (response?.status === 200) {
+              //   // Send data to useContext
+              dispatch({
+                type: "LOGIN_SUCCESS",
+                payload: response.data.data.user,
+              });
+            }
             setIsLogin(true);
-          } else {
-            setIsLogin(false);
+            setOpen(false);
           }
         });
       })
       .catch((error) => {
-        console.log(error);
+        setMessage(error.response.data.message);
+        setTimeout(() => {
+          setMessage(null);
+        }, 5000);
+        console.log(error.response);
       });
   };
 
@@ -90,7 +106,7 @@ export default function RegisterModal() {
       if (response.data.status === "Success") {
         const alert = (
           <>
-            <div className="absolute top-10 w-full text-center text-green-600">
+            <div className="absolute top-10 w-full px-6 overflow-auto text-sm text-center text-green-600">
               <p>Successfully Registered.</p>
               <p>Please Login.</p>
             </div>
@@ -103,29 +119,30 @@ export default function RegisterModal() {
           phone: "",
           password: "",
         });
-      } else if (response?.status === 400) {
-        const alert = (
-          <p className="absolute top-10 w-full text-center text-red-600">
-            Failed. Try Again.
-          </p>
-        );
-        setMessage(alert);
       }
     } catch (error) {
-      console.log(error);
-      const alert = (
-        <p className="absolute top-10 w-full text-center text-red-600">
-          Server Error. Try Again.
-        </p>
-      );
-      setMessage(alert);
+      // const alert = "Server Error. Try Again.";
+      if (error.response.status === 400) {
+        setMessage(
+          <p className="absolute top-10 w-full px-6 overflow-auto text-sm text-center text-red-600">
+            {error.response.data.error.message}
+          </p>
+        );
+      }
+
+      // setMessage(alert);
+      console.log(error.response);
     }
   };
 
   return (
     <section className="px-8 py-10 font-['Product-Sans-Regular'] relative">
       <img src={LoginPinIcon} alt="pin" className="absolute top-0 left-0" />
-      <img src={LoginLeafIcon} alt="pin" className="absolute top-0 right-0" />
+      <img
+        src={LoginLeafIcon}
+        alt="pin"
+        className="absolute top-0 right-0 w-20"
+      />
       <div className="relative">
         <h2 className="mt-4 text-center text-3xl font-bold text-brand-red">
           Sign Up
@@ -192,7 +209,7 @@ export default function RegisterModal() {
           <button className="w-full text-center py-2 px-4 font-bold rounded-md text-white bg-brand-blue">
             Sign Up
           </button>
-          {/* <div>
+          <div>
             <p className="text-left font-bold">Or</p>
             <button
               onClick={signInWithGoogle}
@@ -201,7 +218,7 @@ export default function RegisterModal() {
               <img src={GoogleIcon} alt="google" className="h-6" />
               <p>Continue With Google</p>
             </button>
-          </div> */}
+          </div>
           <p className="text-sm text-brand-darkGray">
             Already have an account?{" "}
             <button

@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { API } from "../config/api";
 import { globalTitle } from "../App";
 
@@ -7,8 +8,7 @@ import { LoginContext } from "../contexts/AuthContext";
 import { ModalContext } from "../contexts/ModalContext";
 
 import { JourneyCard } from "../exports";
-import { BookmarkCircle, UserLeo } from "../exports/expImages";
-import { Link } from "react-router-dom";
+import { BookmarkCircle } from "../exports/expImages";
 
 export default function Profile() {
   const [isLogin, setIsLogin] = useContext(LoginContext);
@@ -22,8 +22,6 @@ export default function Profile() {
   const [form, setForm] = useState({
     image: "",
   });
-
-  const { image } = form;
 
   const getUserJourneys = async () => {
     try {
@@ -152,7 +150,7 @@ export default function Profile() {
             type="text"
             id="searchTerm"
             name="searchTerm"
-            className="w-1/2 duration-150 p-3 rounded-md outline-none focus:outline-none shadow-md focus:shadow-xl"
+            className="w-full md:w-1/2 duration-150 p-3 rounded-md outline-none focus:outline-none shadow-md focus:shadow-xl"
             placeholder={"Find Journey"}
             onChange={handleChange}
           />
@@ -176,9 +174,11 @@ export default function Profile() {
                 return journey;
               }
             })
+            .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
             .map((journey) => (
               <JourneyCard
                 toggleAddBookmark={() => toggleAddBookmark(journey.id)}
+                visibility={"not-sr-only"}
                 key={journey.id}
                 id={journey.id}
                 image={journey.image}

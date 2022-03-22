@@ -1,4 +1,4 @@
-import React, { Component, useContext, useState } from "react";
+import React, { Component, useContext, useEffect, useState } from "react";
 import {
   signInWithPopup,
   GoogleAuthProvider,
@@ -15,7 +15,7 @@ import { LoginContext, RegisteredContext } from "../../contexts/AuthContext";
 import { ModalContext } from "../../contexts/ModalContext";
 import { UserContext } from "../../contexts/UserContext";
 
-import { API } from "../../config/api";
+import { API, checkUser, setAuthToken } from "../../config/api";
 
 export default function LoginModal() {
   const [isLogin, setIsLogin] = useContext(LoginContext);
@@ -44,29 +44,43 @@ export default function LoginModal() {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
       .then((res) => {
-        onAuthStateChanged(auth, (user) => {
-          if (user) {
-            const user = res.user;
+        return checkUser(res.user.email);
+      })
+      .then((res) => {
+        onAuthStateChanged(auth, async (user) => {
+          const config = {
+            headers: {
+              "Content-type": "application/json",
+            },
+          };
+
+          let body = {
+            email: user.email,
+          };
+
+          body = JSON.stringify(body);
+
+          if (res.data.status === "Success") {
+            const response = await API.post("/google-login", body, config);
+            console.log(response);
+            if (response?.status === 200) {
+              //   // Send data to useContext
+              dispatch({
+                type: "LOGIN_SUCCESS",
+                payload: response.data.data.user,
+              });
+            }
             setIsLogin(true);
-            dispatch({
-              type: "LOGIN_SUCCESS",
-              payload: {
-                email: user.email,
-                fullname: user.displayName,
-                id: user.uid,
-                image: user.photoURL,
-                phone: user.phoneNumber,
-                token: user.accessToken,
-              },
-            });
-          } else {
-            setIsLogin(false);
+            setOpen(false);
           }
         });
-        setOpen(false);
       })
       .catch((error) => {
-        console.log(error);
+        setMessage(error.response.data.message);
+        setTimeout(() => {
+          setMessage(null);
+        }, 5000);
+        console.log(error.response);
       });
   };
 
@@ -98,8 +112,10 @@ export default function LoginModal() {
         setOpen(false);
       }
     } catch (error) {
-      const alert = "Login Failed! Try Again.";
-      setMessage(alert);
+      setMessage(error.response.data.message);
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
       console.log(error);
     }
   };
@@ -107,12 +123,16 @@ export default function LoginModal() {
   return (
     <section className="px-8 py-10 font-['Product-Sans-Regular'] relative">
       <img src={LoginPinIcon} alt="pin" className="absolute top-0 left-0" />
-      <img src={LoginLeafIcon} alt="pin" className="absolute top-0 right-0" />
+      <img
+        src={LoginLeafIcon}
+        alt="pin"
+        className="absolute top-0 right-0 w-20"
+      />
       <div className="relative">
         <h2 className="mt-4 text-center text-3xl font-bold text-brand-red">
           Sign In
         </h2>
-        <p className="absolute top-10 w-full text-center text-red-600">
+        <p className="absolute top-10 w-full px-6 overflow-auto text-sm text-center text-red-600">
           {message && message}
         </p>
       </div>
@@ -150,7 +170,7 @@ export default function LoginModal() {
           <button className="w-full text-center py-2 px-4 font-bold rounded-md text-white bg-brand-blue">
             Sign In
           </button>
-          {/* <div>
+          <div>
             <p className="text-left font-bold">Or</p>
             <button
               onClick={signInWithGoogle}
@@ -159,7 +179,7 @@ export default function LoginModal() {
               <img src={GoogleIcon} alt="google" className="h-6" />
               <p>Continue With Google</p>
             </button>
-          </div> */}
+          </div>
           <p className="text-sm text-brand-darkGray">
             Don't have an account?{" "}
             <button

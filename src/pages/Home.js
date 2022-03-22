@@ -37,8 +37,6 @@ export default function Home() {
         const body = JSON.stringify({ idPost });
 
         const response = await API.post("/bookmark/toggle", body, config);
-        setOpen(true);
-        console.log(response);
       } else {
         setOpen(true);
       }
@@ -99,9 +97,11 @@ export default function Home() {
                 return journey;
               }
             })
+            .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
             .map((journey) => (
               <JourneyCard
                 toggleAddBookmark={() => toggleAddBookmark(journey.id)}
+                visibility={"sr-only"}
                 key={journey.id}
                 bookmarkCount={4}
                 id={journey.id}

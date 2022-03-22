@@ -42,8 +42,7 @@ export default function Bookmarks() {
         const body = JSON.stringify({ idPost });
 
         const response = await API.post("/bookmark/toggle", body, config);
-        setOpen(true);
-        console.log(response);
+        getJourneys();
       } else {
         setOpen(true);
       }
@@ -101,9 +100,13 @@ export default function Bookmarks() {
                 return journey;
               }
             })
+            .sort(
+              (a, b) => new Date(b.post.updatedAt) - new Date(a.post.updatedAt)
+            )
             .map((journey) => (
               <JourneyCard
                 toggleAddBookmark={() => toggleAddBookmark(journey.post.id)}
+                visibility={"sr-only"}
                 key={journey.post.id}
                 id={journey.post.id}
                 image={"http://localhost:5000/uploads/" + journey.post.image}

@@ -38,7 +38,7 @@ export default function Navbar() {
               <img src={LogoBlack} alt="" />
             </Link>
             <div className="flex items-center space-x-3">
-              <span>Welcome Back, {state.user.fullname}!</span>
+              <span className="sr-only md:not-sr-only">Welcome Back, {state.user.fullname}!</span>
               <Avatar logout={signGoogleOut} image={state.user.image} />
             </div>
           </nav>

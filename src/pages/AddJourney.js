@@ -3,11 +3,6 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { API } from "../config/api";
 
-// import { Editor } from "react-draft-wysiwyg";
-// import { EditorState, convertToRaw } from "draft-js";
-// import draftToHtml from "draftjs-to-html";
-// import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-
 import { PictureIcon } from "../exports/expImages";
 import { globalTitle } from "../App";
 
@@ -112,8 +107,8 @@ export default function AddJourney() {
             className="px-4 py-3 outline-none rounded-sm"
           />
         </div>
-        <div className="flex justify-between">
-          <div className="w-3/4">
+        <div className="md:flex space-y-5 md:space-y-0 justify-between">
+          <div className="w-full md:w-3/4">
             <CKEditor
               editor={ClassicEditor}
               onChange={handleEditorChange}
@@ -121,8 +116,6 @@ export default function AddJourney() {
                 removePlugins: ["EasyImage", "ImageUpload", "MediaEmbed"],
               }}
               onReady={(editor) => {
-                // You can store the "editor" and use when it is needed.
-                // console.log("Editor is ready to use!", editor);
                 editor.editing.view.change((writer) => {
                   writer.setStyle(
                     "min-height",
@@ -132,24 +125,11 @@ export default function AddJourney() {
                 });
               }}
             />
-            {/* <div className="">
-              <label htmlFor="body" className="sr-only">
-                Body
-              </label>
-              <textarea
-                className="absolute top-28 right-20"
-                disabled
-                name="body"
-                id="body"
-                cols="100"
-                rows="5"
-              ></textarea>
-            </div> */}
           </div>
           <div>
             <label
               htmlFor="image"
-              className="flex flex-col items-center justify-end w-56 h-56 p-4 space-y-4 bg-brand-white border border-brand-blue rounded-md cursor-pointer"
+              className="flex flex-col items-center justify-end w-full md:w-56 h-56 p-4 space-y-4 bg-brand-white border border-brand-blue rounded-md cursor-pointer"
             >
               <img
                 src={preview ? preview : PictureIcon}
