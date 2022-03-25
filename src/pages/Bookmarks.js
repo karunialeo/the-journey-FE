@@ -110,7 +110,7 @@ export default function Bookmarks() {
                 key={journey.post.id}
                 id={journey.post.id}
                 image={
-                  "https://res.cloudinary.com/karunialeo/image/upload/v1647573847/the_journey_media/" +
+                  "https://res.cloudinary.com/karunialeo/image/upload/v1647573847/" +
                   journey.post.image
                 }
                 bookmark={BookmarkFill}
