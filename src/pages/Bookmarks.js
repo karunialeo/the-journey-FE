@@ -109,7 +109,7 @@ export default function Bookmarks() {
                 visibility={"sr-only"}
                 key={journey.post.id}
                 id={journey.post.id}
-                image={"http://localhost:5000/uploads/" + journey.post.image}
+                image={journey.post.image}
                 bookmark={BookmarkFill}
                 title={journey.post.title}
                 postAt={journey.post.updatedAt}
