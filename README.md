@@ -2,6 +2,10 @@
 
 You may visit this project by visiting (https://karunialeo-the-journey.netlify.app/).
 
+## Back End Repository
+
+Clone Front End repository from here (https://github.com/karunialeo/the-journey-API).
+
 ## Available Scripts
 
 In the project directory, you can run:
